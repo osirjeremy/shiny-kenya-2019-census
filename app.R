@@ -35,6 +35,7 @@ library(tidyr)
 library(janitor)
 library(tidyverse)
 
+library(leaflet)
 library(sf)
 library(sp)
 library(magrittr)
@@ -309,64 +310,64 @@ server <- function(input, output) {
     
     
     # Reactive Leaflet map - this one is not displaying at all
-    # Error message, line 344 <- Warning: Error in as.vector: cannot coerce type 'closure' to vector of type 'character'
+    # Error message, line 341 <- Warning: Error in as.vector: cannot coerce type 'closure' to vector of type 'character'
 
-# 
-#     output$map <- renderLeaflet({
-#     
-# 
-#       #compare class and output of static column call (mpo_female) to input$selected column
-#       print(class(map_data_df$mpo_female))
-#       print(map_data_df$mpo_female)
-#       print("------------------------")
-#       print(class(map_data_df[[input$variableselected]]))
-#       print(map_data_df[[input$variableselected]])
-# 
-#     #create leaflet
-# 
-#     #   ### Specify the color scheme
-#       pal <- colorBin(
-#         palette = "YlOrRd",
-#         domain = map_data_df[[input$variableselected]]
-#       )
-# 
-#       ### Specify how labels will be displayed
-#       # labels <- sprintf(
-#       #   "<strong>%s</strong><br/>%s",
-#       #   map$county, formatC(map_data_df[[input$variableselected]], format = "d", big.mark = ",")
-#       # ) %>% lapply(htmltools::HTML)
-# 
-#       ### Generate the graph.
-#       l <- leaflet(map_data_df) %>%
-#         addProviderTiles("MapBox", options = providerTileOptions(
-#           id = "mapbox.light",
-#           accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
-#         addTiles() %>%
-#         addPolygons(fillColor = ~pal(input$variableselected),
-#                     color = "black",
-#                     weight = 2,
-#                     opacity = 1,
-#                     dashArray = "3",
-#                     fillOpacity = 0.7,
-#                     highlight = highlightOptions(
-#                       weight = 4,
-#                       color = "red",
-#                       dashArray = "",
-#                       bringToFront = TRUE),
-#                     label = labels,
-#                     labelOptions = labelOptions(
-#                       style = list("font-weight" = "normal", padding = "3px 8px"),
-#                       textsize = "15px",
-#                       direction = "auto")) #%>%
-#         # leaflet::addLegend(
-#         #   position = c("bottomright"), pal = pal, values = ~map_data_df[[input$variableselected]])
-# 
-# 
-# 
-# 
-# 
-# 
-#     })
+
+    # output$map <- renderLeaflet({
+    # 
+    # 
+    #   #compare class and output of static column call (mpo_female) to input$selected column
+    #   print(class(map_data_df$mpo_female))
+    #   print(map_data_df$mpo_female)
+    #   print("------------------------")
+    #   print(class(map_data_df[[input$variableselected]]))
+    #   print(map_data_df[[input$variableselected]])
+    # 
+    # #create leaflet
+    # 
+    # #   ### Specify the color scheme
+    #   pal <- colorBin(
+    #     palette = "YlOrRd",
+    #     domain = map_data_df[[input$variableselected]]
+    #   )
+    # 
+    #   ### Specify how labels will be displayed
+    #   # labels <- sprintf(
+    #   #   "<strong>%s</strong><br/>%s",
+    #   #   map$county, formatC(map_data_df[[input$variableselected]], format = "d", big.mark = ",")
+    #   # ) %>% lapply(htmltools::HTML)
+    # 
+    #   ### Generate the graph.
+    #   l <- leaflet(map_data_df) %>%
+    #     addProviderTiles("MapBox", options = providerTileOptions(
+    #       id = "mapbox.light",
+    #       accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
+    #     addTiles() %>%
+    #     addPolygons(fillColor = ~pal(input$variableselected),
+    #                 color = "black",
+    #                 weight = 2,
+    #                 opacity = 1,
+    #                 dashArray = "3",
+    #                 fillOpacity = 0.7,
+    #                 highlight = highlightOptions(
+    #                   weight = 4,
+    #                   color = "red",
+    #                   dashArray = "",
+    #                   bringToFront = TRUE),
+    #                 label = labels,
+    #                 labelOptions = labelOptions(
+    #                   style = list("font-weight" = "normal", padding = "3px 8px"),
+    #                   textsize = "15px",
+    #                   direction = "auto")) #%>%
+    #     # leaflet::addLegend(
+    #     #   position = c("bottomright"), pal = pal, values = ~map_data_df[[input$variableselected]])
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # })
 
 
     
