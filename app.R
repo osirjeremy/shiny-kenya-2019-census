@@ -310,7 +310,7 @@ server <- function(input, output) {
     
     
     # Reactive Leaflet map - this one is not displaying at all
-    # Error message, line 341 <- Warning: Error in as.vector: cannot coerce type 'closure' to vector of type 'character'
+    # Error message, line 353 <- Warning: Error in as.vector: cannot coerce type 'closure' to vector of type 'character'
     
     # Connect input$selected with server
     map_input = reactive({
