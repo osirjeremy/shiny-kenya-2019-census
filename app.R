@@ -45,24 +45,6 @@ library(plyr)
 library(rgdal)
 library(viridis)
 
-
-# Map data ---------------------------------------------------------
-# KECounties <- rKenyaCensus::KenyaCounties_SHP %>%
-#     sf::st_as_sf() %>%
-#     select(County, Area, geometry)
-#
-# KenyaSHP <- read_sf("./kenya-counties.shp", quiet = TRUE,
-#                     stringsAsFactors = FALSE, as_tibble = TRUE)
-# print(KenyaSHP[6:9], n = 3)
-
-
-
-# Kenya<-getData("GADM", country="KE", level=0)
-# kenya.map <-getData("GADM", country="KE", level=1)
-# 
-# # plot(Kenya)
-# plot(kenya.map)
-
 # Load Map data  ---------------------------------------------------------
 # 
 KenyaSHP <- read_sf("./ke_county.shp", quiet = TRUE,
@@ -101,18 +83,17 @@ counties_KenyaSHP <- KenyaSHP %>%
   dplyr::select(.,county) %>%
   pull() %>%
   unique()
-# 
+
 # # convert column names in population dataset to lower title case
 ke_data <- ke_data %>%
   ungroup() %>%
   clean_names() %>%
   mutate(., county = tools::toTitleCase(tolower(county)))
-# 
-# 
+
 # ### Inspect the county names that are different in each of the datasets
 # unique(ke_data$county)[which(!unique(ke_data$county) %in% counties_KenyaSHP)]
-# 
-# 
+
+
 # ### Clean the county names so that they match in both datasets
 ke_data <- ke_data %>%
   mutate(county = ifelse(county == "Taita/Taveta", "Taita Taveta",
@@ -138,10 +119,9 @@ map_data_df <- left_join(KenyaSHP, ke_data2, by = "county")
 map_data_df <-map_data_df %>%
   dplyr::select(county, everything())
 
-# write_csv(map_data_df, "/Users/jeremyosir/Desktop/D_Sci/kenya2019census_ICT_shiny/map_data_df", row.names = FALSE)
 
 #SHINY APP --------------------------------------------------
-#Load dataframes - load in processed dataframes for quicker loaning
+#Load dataframes - load in processed dataframes for quicker loading
 # map_data_df <-  read_csv("./map_data_df.csv")
 # ke_data <- read_csv("./ke_data.csv")
 
@@ -274,56 +254,10 @@ server <- function(input, output) {
       )
     })
     
-   # # # 'Static' Leaflet Map -- this one is displaying correctly
-    # output$map <- renderLeaflet({
-    # 
-    #   pal <- colorBin(palette = "YlOrRd",
-    #                   domain = map_data_df$mpo_female
-    #                   )
-    #   #Specify labels
-    # 
-    #   labels <- sprintf(
-    #       "<strong>%s</strong><br/>%s",
-    #       map_data_df$county, formatC(map_data_df$mpo_female, format = "d", big.mark = ",")
-    #     ) %>% lapply(htmltools::HTML)
-    # 
-    #   ## Generate the graph.
-    #   l <- leaflet(data = map_data_df) %>%
-    #       addProviderTiles("MapBox", options = providerTileOptions(
-    #         id = "mapbox.light",
-    #         accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN'))) %>%
-    #       addTiles() %>%
-    #       addPolygons(fillColor = ~pal(mpo_female),
-    #                   color = "black",
-    #                   weight = 2,
-    #                   opacity = 1,
-    #                   dashArray = "3",
-    #                   fillOpacity = 0.7,
-    #                   highlight = highlightOptions(
-    #                     weight = 4,
-    #                     color = "red",
-    #                     dashArray = "",
-    #                     bringToFront = TRUE),
-    #                   label = labels,
-    #                   labelOptions = labelOptions(
-    #                     style = list("font-weight" = "normal", padding = "3px 8px"),
-    #                     textsize = "15px",
-    #                     direction = "auto")) %>%
-    #       leaflet::addLegend(
-    #         position = c("bottomright"), pal = pal, values = ~mpo_female)
-    # 
-    # 
-    # 
-    # 
-    # })
-
     
+    # Reactive Leaflet map
     
-    
-    # Reactive Leaflet map - this one is not displaying at all
-    # Error message, line 353 <- Warning: Error in as.vector: cannot coerce type 'closure' to vector of type 'character'
-
-    #Connect input$selected with server
+    #Connect input$variableselected from ui with server
     map_input = reactive({
       switch(input$variableselected,
              "mpo_female" = map_data_df$mpo_female,
@@ -335,26 +269,6 @@ server <- function(input, output) {
 
 
     output$map <- renderLeaflet({
-
-
-    # * DEBUG* compare class and output of static column call (mpo_female) to input$selected column
-    # print(class(map_data_df$mpo_female))
-    # print(map_data_df$mpo_female)
-    # print("------------------------")
-    # # print(class(map_data_df[[map_input()]]))
-    # # print(map_data_df[[map_input()]])
-    # print("------------------------")
-    # print(class(map_input))
-    # print("------------------------")
-    # print(class(map_input()))
-    # print("------------------------")
-    # print(class(map_data_df))
-    # print("------------------------")
-    # # print(vars(map_input())[[1]])
-
-
-    #create leaflet
-
     #   ### Specify the color scheme
     pal <- colorBin(
       palette = "YlOrRd",
@@ -400,33 +314,6 @@ server <- function(input, output) {
 
 
     })
-    
-    # observe({
-    #   
-    #   leafletProxy(mapId = "map") %>%
-    #     clearMarkers() %>%   ## clear previous markers
-    #     # addMarkers() %>% 
-    #     addTiles() %>% 
-    #     addPolygons(fillColor = ~pal(map_data_df[[map_input()]]),
-    #                 color = "black",
-    #                 weight = 2,
-    #                 opacity = 1,
-    #                 dashArray = "3",
-    #                 fillOpacity = 0.7,
-    #                 highlight = highlightOptions(
-    #                   weight = 4,
-    #                   color = "red",
-    #                   dashArray = "",
-    #                   bringToFront = TRUE),
-    #                 label = labels,
-    #                 labelOptions = labelOptions(
-    #                   style = list("font-weight" = "normal", padding = "3px 8px"),
-    #                   textsize = "15px",
-    #                   direction = "auto"))
-    # })
-
-    
-    
     
 }
 
