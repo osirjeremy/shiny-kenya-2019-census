@@ -44,6 +44,7 @@ library(maptools)
 library(plyr)
 library(rgdal)
 library(viridis)
+library(rmapshaper)
 
 # Load Map data  ---------------------------------------------------------
 # 
@@ -51,7 +52,11 @@ KenyaSHP <- read_sf("./ke_county.shp", quiet = TRUE,
                     stringsAsFactors = FALSE,as_tibble = TRUE)
 
 # # Modify map projection
-KenyaSHP <- st_transform(KenyaSHP, crs = 4326)
+KenyaSHP <- st_transform(KenyaSHP, crs = 4326) 
+#   ms_simplify(.)
+# names(st_geometry(KenyaSHP)) = NULL
+
+  
 
 # if trying to save df to CSV, need to remove names from geometry column using code below:
 # https://community.rstudio.com/t/polygons-not-getting-plotted-on-leaflet-map-since-update/17856/2
@@ -114,7 +119,8 @@ KenyaSHP$county <- trimws(KenyaSHP$county)
 ke_data2$county <- trimws(ke_data2$county)
 
 map_data_df <- left_join(KenyaSHP, ke_data2, by = "county")
-# 
+
+
 # ### Sort the data so that the County variable appears first
 map_data_df <-map_data_df %>%
   dplyr::select(county, everything())
@@ -122,6 +128,7 @@ map_data_df <-map_data_df %>%
 
 #SHINY APP --------------------------------------------------
 #Load dataframes - load in processed dataframes for quicker loading
+
 # map_data_df <-  read_csv("./map_data_df.csv")
 # ke_data <- read_csv("./ke_data.csv")
 
