@@ -57,8 +57,8 @@ ui <- dashboardPage(skin = "red",
         sidebarMenu(
             id = "tabs",
             menuItem("Introduction", tabName = "intro", icon = icon("search")),
-            menuItem("Mobile Phone Ownership Overview", tabName = "mobile_own", icon = icon("search")),
-            menuItem("Mobile ownership, gender", tabName = "mobile_gender", icon = icon("search")))
+            menuItem("Mobile Phone Ownership", tabName = "mobile_own", icon = icon("search")),
+            menuItem("Internet Use", tabName = "internet_use", icon = icon("search")))
         ),
     
     dashboardBody(
@@ -105,7 +105,17 @@ ui <- dashboardPage(skin = "red",
                     ),
             
             
-            tabItem(tabName = "mobile_gender",
+            tabItem(tabName = "internet_use",
+                    fluidRow(valueBoxOutput("total.uoI"),
+                             valueBoxOutput("male.uoI"),
+                             valueBoxOutput("female.uoI")),
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     fluidRow())
             
         )
@@ -118,10 +128,10 @@ ui <- dashboardPage(skin = "red",
 server <- function(input, output) {
   
   # load data
-  map_data_df <- readRDS(file = "data.Rds")
+  map_data_df <- readRDS(file = "map_data.Rds")
   ke_data <- readRDS(file = "ke_data.rds")
   
-  #some data manipulation to derive the values of the boxes
+  #some data manipulation to derive the values of the boxes - consider moving this to cleaning file
   
   pop.total<- dplyr::filter(ke_data, sub_county == "KENYA")$pop_total
   pop.male <- dplyr::filter(ke_data, sub_county == "KENYA")$pop_male
@@ -129,8 +139,13 @@ server <- function(input, output) {
   mpo.total <- dplyr::filter(ke_data, sub_county == "KENYA")$mpo_total_perc
   mpo.female <- dplyr::filter(ke_data, sub_county == "KENYA")$mpo_female_perc
   mpo.male <- dplyr::filter(ke_data, sub_county == "KENYA")$mpo_male_perc
+  uoI.total <- dplyr::filter(ke_data, sub_county == "KENYA")$uo_i_total_perc
+  uoI.male <- dplyr::filter(ke_data, sub_county == "KENYA")$uo_i_male_perc
+  uoI.female <- dplyr::filter(ke_data, sub_county == "KENYA")$uo_i_female_perc
   
 # Value Box values
+  
+  
     output$PopTotal <- renderValueBox({
       valueBox(
         formatC(pop.total,format = "d", big.mark = ","),
@@ -138,6 +153,8 @@ server <- function(input, output) {
         icon = icon("user", lib = "font-awesome")
       )
     })
+    
+    #Male population
     output$PopMale <- renderValueBox({
       valueBox(
         formatC(pop.male,format = "d", big.mark = ","),
@@ -146,6 +163,7 @@ server <- function(input, output) {
       )
     })
     
+    #Female Population
     output$PopFemale <- renderValueBox({
       valueBox(
         formatC(pop.female,format = "d", big.mark = ","),
@@ -154,15 +172,16 @@ server <- function(input, output) {
       )
     })
     
+    # Population owning mobile phones
     output$total.mpo <- renderValueBox({
       valueBox(
         formatC(mpo.total,digits = 1, format = "f", big.mark = ","),
-        "Mobile phone ownership %, total pop",
+        "Mobile phone ownership %, total popn.",
         icon = icon("mobile-alt", lib = "font-awesome")
       )
     })
     
-    
+    # Male Population owning mobile phones
     output$male.mpo <- renderValueBox({
       valueBox(
         formatC(mpo.male, digits = 1, format = "f", big.mark = ","),
@@ -171,11 +190,38 @@ server <- function(input, output) {
       )
     })
     
-    
+    # Female Population owning mobile phones
     output$female.mpo <- renderValueBox({
       valueBox(
         formatC(mpo.female, digits = 1, format = "f", big.mark = ","),
         "Mobile phone ownership %, female",
+        icon = icon("user", lib = "font-awesome")
+      )
+    })
+    
+    # Population that use the internet
+    output$total.uoI <- renderValueBox({
+      valueBox(
+        formatC(mpo.female, digits = 1, format = "f", big.mark = ","),
+        "Internet Use, %, total popn.",
+        icon = icon("user", lib = "font-awesome")
+      )
+    })
+    
+    # Male Population that use the internet
+    output$male.uoI <- renderValueBox({
+      valueBox(
+        formatC(uoI.male, digits = 1, format = "f", big.mark = ","),
+        "Intenet Use, %, male",
+        icon = icon("user", lib = "font-awesome")
+      )
+    })
+    
+    # Female Population that use the internet
+    output$male.uoI <- renderValueBox({
+      valueBox(
+        formatC(uoI.male, digits = 1, format = "f", big.mark = ","),
+        "Intenet Use, %, male",
         icon = icon("user", lib = "font-awesome")
       )
     })

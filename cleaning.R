@@ -85,8 +85,8 @@
 # ke_data <- read_csv("./ke_data_df2.csv")
 
 
-#saveRDS(map_data_df, "data.rds")
-map_data_df <- readRDS(file = "data.Rds")
+#saveRDS(map_data_df, "map_data.rds")
+map_data_df <- readRDS(file = "map_data.Rds")
 
 #saveRDS(ke_data, "ke_data.rds")
 ke_data <- readRDS(file = "ke_data.rds")
