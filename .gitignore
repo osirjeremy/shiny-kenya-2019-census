@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 .icloud
+.csv
 
 # Example code in package build process
 .Rproj.user
