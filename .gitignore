@@ -12,6 +12,12 @@
 # ShinyApps manifest
 *.dcf
 
+# Map files
+.dbf
+.prj
+.shp
+.shx
+
 # Fonts
 *.ttc
 
