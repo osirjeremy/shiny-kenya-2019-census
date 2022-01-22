@@ -159,6 +159,7 @@ ui <- dashboardPage(skin = "red",
                                        p("Some text talking about the table")))
                             )
                     ),
+
                     
                     tabItem(tabName = "conclusion",
                             fluidPage(
@@ -180,12 +181,12 @@ ui <- dashboardPage(skin = "red",
 )
 
 
-
     
 
 # Define server logic for outputs
 server <- function(input, output) {
   
+
   #load in processed dataframes and ggplots for quicker loading in shiny app
   map_data_df <- readRDS(file = "map_data.rds")
   ke_data <- readRDS(file = "ke_data.rds")
@@ -312,7 +313,6 @@ server <- function(input, output) {
     
     
     
-    
     # Reactive Leaflet map
     
     #Connect input$variableselected from ui with server
@@ -380,7 +380,6 @@ server <- function(input, output) {
                                         "uo_i_female_perc" = "Internet Use % (Women)",
                                         "mobile_gender_gap" = "Phone  Ownership, Gender Gap %",
                                         "internet_gender_gap" = "Internet Use, Gender Gap %"))
-    
     
     
     })
