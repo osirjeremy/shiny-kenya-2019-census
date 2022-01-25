@@ -14,9 +14,13 @@ library(tidyverse)
 library(formattable)
 library(forcats)
 library(scales)
-
 library(rKenyaCensus)
-force(DataCatalogue) # dataset dictionary
+library(ggplot2)
+library(tidyr)
+
+
+
+# force(DataCatalogue) # dataset dictionary
 
 # Load Map data  ---------------------------------------------------------
 # 
@@ -35,7 +39,7 @@ force(DataCatalogue) # dataset dictionary
 # # # Load Census data  ---------------------------------------------------------
 # mob.phone.df <- V4_T2.32
 # internet.use.df <- V4_T2.33
-ag.type.df <-  V4_T2.25
+# ag.type.df <-  V4_T2.25
  
 # df_list <- list(mob.phone.df, internet.use.df,ag.type.df)
 
@@ -187,8 +191,6 @@ saveRDS(ke_data, "ke_data.rds")
 saveRDS(internet_table,"internet_table.rds")
 saveRDS(mobile_table, "mobile_table.rds")
 
-library(ggplot2)
-library(tidyr)
 
 
 # Pyramind chart????
@@ -274,7 +276,7 @@ saveRDS(internet_gender_pyramid, "./internet_gender_pyramid.rds")
 
 
 # Bubble Chart
-library(ggplot2)s
+library(ggplot2)
 library(dplyr)
 library(plotly)
 library(viridis)

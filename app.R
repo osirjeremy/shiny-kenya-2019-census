@@ -22,10 +22,7 @@
 # https://stackoverflow.com/questions/38161073/manually-adding-legend-values-in-leaflet#comment63910354_38235047
 
 
-#library(devtools)
-#devtools::install_github('Shelmith-Kariuki/rKenyaCensus')
 
-# Shapefiles from: https://data.humdata.org/dataset/47-counties-of-kenya
 
 #library(rKenyaCensus)
 
