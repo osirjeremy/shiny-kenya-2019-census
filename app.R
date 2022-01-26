@@ -12,9 +12,10 @@
           # https://rpubs.com/spoonerf/countrymapggplot2
     # Build out MPO gender tab — Map with mpo ownership by county + top counties by MPO
 
-# 1. Add Mobile Data Table (add to existing Internet tab) = why should they be seperate?
-# 2. Format tables using DT Clare Blog
-
+# 1. Add interactive Bubble Chart to Intro Slide (1hr)
+# 2. Add Ag maps to Third Tab (1hr)
+# 3. Format tables using DT Clare Blog (45mins)
+# $. Conclusion (1hr)
 # Add bar charts to DT Tabs
 
 #format legend values:
@@ -58,7 +59,7 @@ library(rmapshaper)
 
 
 # Define UI for application that draws a histogram
-ui <- dashboardPage(skin = "red",
+ui <- dashboardPage(skin = "purple",
                     # Shiny App Cover Page - summary of project and key questions. Digital Access, and gender gap
                     dashboardHeader(title = "Kenya 2019 Census"),
                     
@@ -82,98 +83,147 @@ ui <- dashboardPage(skin = "red",
                                                   and internet use across Kenyan counties, and investigates differences in adoption of these digital tools by regions and gender.")),
                                              h5(p("Research and visualizations by Jeremy Osir.\n
                                                                                 Census Data library provided by Shel Kariuki, rKenyaCensus"))))
-                                  ),
-                                         # box(width = 12,
-                                         #     plotlyOutput("bubblechart"))),
-                                  fluidRow(
+                                ),
+                                # box(width = 12,
+                                #     plotlyOutput("bubblechart"))),
+                                fluidRow(
                                   column(width = 6, align = "left",
-                                             selectInput(inputId = "variableselected",
-                                                         label = "Select a Digital Indicator to display in the map",
-                                                         choices = c("Mobile Phone Ownership % (Total pop)" = "mpo_total_perc",
-                                                                     "Mobile Phone Ownership % (Men)" = "mpo_male_perc",
-                                                                     "Mobile Phone Ownership % (Women)" = "mpo_female_perc",
-                                                                     #"Mobile Ownership Gender Gap % (Male - Female)" = "mobile_gender_gap", # move to next tab
-                                                                     "Internet Use % (Total)" = "uo_i_male_perc",
-                                                                     "Internet Use % (Men)" = "uo_i_male_perc",
-                                                                     "Internet Use % (Women)" = "uo_i_female_perc"),
-                                                                     #"Internet Use Gender Gap % (male - female)" = "internet_gender_gap"), # move to next tab
-                                                         selected = "Mobile Phone Ownership % (Women"),
-                                             leafletOutput(outputId = "map", height = 500),
-                                         column(width = 6,
-                                                h4(p("A review of mobile phone ownership and internet access highlights that
-                                                     digital connectivity tends to be highest in the central and southern regions
-                                                     of the country,where urban centers like Nairobi are, and lowest in the northern regions.")))
+                                         selectInput(inputId = "variableselected",
+                                                     label = "Select a Digital Indicator to display in the map",
+                                                     choices = c("Mobile Phone Ownership % (Total pop)" = "mpo_total_perc",
+                                                                 "Mobile Phone Ownership % (Men)" = "mpo_male_perc",
+                                                                 "Mobile Phone Ownership % (Women)" = "mpo_female_perc",
+                                                                 #"Mobile Ownership Gender Gap % (Male - Female)" = "mobile_gender_gap", # move to next tab
+                                                                 "Internet Use % (Total)" = "uo_i_total_perc",
+                                                                 "Internet Use % (Men)" = "uo_i_male_perc",
+                                                                 "Internet Use % (Women)" = "uo_i_female_perc"),
+                                                     #"Internet Use Gender Gap % (male - female)" = "internet_gender_gap"), # move to next tab
+                                                     selected = "Mobile Phone Ownership % (Women"),
+                                         leafletOutput(outputId = "map", height = 500)),
+                                  column(width = 6,
+                                         box(width = 12,
+                                             h3(tags$b("Digital Connectivity Explorer")),
+                                             h4(p("The interactive map allows us to explore various digital connectivity metrics, specifically mobile phone ownership and internet access,
+                                             across Kenyan counties by gender.")),
+                                             
+                                             h4(p("According to the data, digital connectivity tends to be highest in the central and southern regions of the country - specifically in
+                                             the capital city Nairobi, and its surrounding counties, which include places like Kiambu, Nyeri, Murang'a and Kirinyaga.")),
+                                             
+                                             h4(p("Conversely, digital connectivity is lowest in north and north eastern Kenya. According to the World Bank these regions, which are semi-arid 
+                                             and often experience drought, are characterized by profound infrastructure deficits, including lack of access to roads, electricity, water, and to social services.
+                                             World Bank data also indicate that the average poverty rate in these regions is double the national average (68% vs 34%).")),
+                                             
+                                             h4(p("While more men tend to own phones and use the internet, the patterns of digital connectivity across countries do not seem to vary significantly
+                                             compared to the overall population.")),
+                                             
+                                             h4(tags$i("In the other tabs of this dashboard, which can be accessed on the top left of the dashboard, we will take a closer look at how 
+                                             digital connectivity varies between men and women (see Mind the Gender Gap),and finally look at how digital access amongst the broader population
+                                             could have implications on agriculture,a big driver of Kenya's economy (see Farming tab)"))
+                                             
+                                             
+                                             
+                                             
+                                         ))
+                                ),
+                                fluidRow(
+                                  column(width = 12, offset = 0, style='padding-left:0px; padding-right:0px; padding-top:30px; padding-bottom:5px',
+                                         box(width = 12,
+                                             h3(tags$b("Higher Phone Ownership generally correlates with more internet Usage  ")),
+                                             h4(p("The interactive bubble chart (see below) shows a positive relationship between phone ownership and internet usage,
+                                             across counties.")),
+                                             
+                                             h4(tags$i("Hover cursor over the bubbles to see more information on each county. You can toggle the filters
+                                                       at the top of the chart to zoom in on particular areas, compare counties metrics, or 
+                                                       highlight certain areas of the chart")),
+                                             
+                                             h4(p("With a few exceptions, larger population centers (shown by larger circles in the chart) tend to have higher 
+                                             rates of digital connectivity. 
+                                             Nairobi,Kiambu and Mombasa (top-right), which had large populations (1M+) led the way in both metrics.
+                                             Phone ownership and internet usage in these countries exceeded 60% and 40%, respectively. ")),
+                                             
+                                             h4(p("Conversely, a few counties with large populations like Bungoma (1.5M), Narok (1M), Migori (1M), and 
+                                             Kilifi (1.3M) had phone ownership rates of less than 40% and internet usage less than 15%.")),
+                                             
+                                             h4(tags$i("The counties in the bottom left quadrant of the chart (i.e. low phone ownership and low internet usage)
+                                                       were predominantly counties in the north and northeastern region of Kenya. This highlights the significant
+                                                       digital inequity in these regions, which has broader implications on these populations ability to 
+                                                       participate in the modern digital economy."))
+                                         )
                                   )
-                                )
-         
-                        ),
-                    
-                    # Page 2: Overview of broad digital access across various counties. Which counties have highest access/lowest
-                    tabItem(tabName = "digi_gap",
-                            fluidRow(
-                              column(width = 6, 
-                                     tags$head(tags$style(HTML(".small-box {height: 70px}"))),
-                                     valueBoxOutput("total.mpo.perc"),
-                                     valueBoxOutput("male.mpo.perc"),
-                                     valueBoxOutput("female.mpo.perc"),
-                                     
-                                     valueBoxOutput("total.uoI.perc"),
-                                     valueBoxOutput("male.uoI.perc"),
-                                     valueBoxOutput("female.uoI.perc"))),
-                            fluidRow(
-                              column(width = 8,
-                                     plotOutput("mobile_gender_gap_chart", height = 800))),
-                            
-                            fluidRow(
-                              column(width = 8,
-                                     plotOutput("internet_gender_gap_chart", height = 800))),
-                              
-                            
-                    ),
-                            
-                            
-                    # Diving deeper into the gender gap
-                    tabItem(tabName = "the_data",
-                            fluidPage(
-                              fluidRow(
-                                
-                                # replace with bar chart showing population with mobile phone and those without (ditto for internet)
-                                valueBoxOutput("total.uoI"), 
-                                valueBoxOutput("male.uoI"),
-                                valueBoxOutput("female.uoI")),
-                              
-                              # reduce size of table and add pyramid chart showing counties with men owning more phones vs women (ditto internet)
-                              fluidRow(titlePanel("Digital Gender Cap"),
-                                       mainPanel(width = 6,
-                                                 dataTableOutput("internet_table"))),
-                              
-                              fluidRow(
-                                column(width = 6,
-                                       p("Some text talking about the table")
-                                       
-                                ),
-                                column(width = 6,
-                                       p("Some text talking about the table")))
-                            )
-                    ),
+                                ), 
+                                fluidRow(
+                                  column(width = 11, offset = 0.5, style='padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:5px',
+                                         plotlyOutput("mpo_internet_bubble", height = 600)
+                                  ))
 
-                    
-                    tabItem(tabName = "conclusion",
-                            fluidPage(
-                              
-                              fluidRow(titlePanel("Implications and Further Research"),
-                                       mainPanel(width = 12)
-                              ),
-                              
-                              fluidRow(
-                                column(width = 6,
-                                       p("Some text talking the analysis")
-                                       
                                 ),
-                                column(width = 6,
-                                       p("Some text talking about future research")))
-                            )
-                    ))
+                        
+                        # Page 2: Overview of broad digital access across various counties. Which counties have highest access/lowest
+                        tabItem(tabName = "digi_gap",
+                                fluidRow(
+                                  column(width = 12, 
+                                         tags$head(tags$style(HTML(".small-box {height: 70px}"))),
+                                         valueBoxOutput("total.mpo.perc"),
+                                         valueBoxOutput("male.mpo.perc"),
+                                         valueBoxOutput("female.mpo.perc"),
+                                         
+                                         valueBoxOutput("total.uoI.perc"),
+                                         valueBoxOutput("male.uoI.perc"),
+                                         valueBoxOutput("female.uoI.perc"))),
+                                fluidRow(
+                                  column(width = 7,
+                                         plotOutput("mobile_gender_gap_chart", height = 800))),
+                                
+                                fluidRow(
+                                  column(width = 7,
+                                         plotOutput("internet_gender_gap_chart", height = 800))),
+                                
+                                
+                        ),
+                        
+                        
+                        # Diving deeper into the gender gap
+                        tabItem(tabName = "the_data",
+                                fluidPage(
+                                  fluidRow(
+                                    
+                                    # replace with bar chart showing population with mobile phone and those without (ditto for internet)
+                                    valueBoxOutput("total.uoI"), 
+                                    valueBoxOutput("male.uoI"),
+                                    valueBoxOutput("female.uoI")),
+                                  
+                                  # reduce size of table and add pyramid chart showing counties with men owning more phones vs women (ditto internet)
+                                  fluidRow(titlePanel("Digital Gender Gap"),
+                                           mainPanel(width = 6,
+                                                     dataTableOutput("internet_table"))),
+                                  
+                                  fluidRow(
+                                    column(width = 6,
+                                           p("Some text talking about the table")
+                                           
+                                    ),
+                                    column(width = 6,
+                                           p("Some text talking about the table")))
+                                )
+                        ),
+                        
+                        
+                        tabItem(tabName = "conclusion",
+                                fluidPage(
+                                  
+                                  fluidRow(titlePanel("Implications and Further Research"),
+                                           mainPanel(width = 12)
+                                  ),
+                                  
+                                  fluidRow(
+                                    column(width = 6,
+                                           p("Some text talking the analysis")
+                                           
+                                    ),
+                                    column(width = 6,
+                                           p("Some text talking about future research")))
+                                )
+                        ))
                     )
 )
 
@@ -184,11 +234,13 @@ ui <- dashboardPage(skin = "red",
 server <- function(input, output) {
   
 
-  #load in processed dataframes and ggplots for quicker loading in shiny app
-  map_data_df <- readRDS(file = "map_data.rds")
+  #load in processed dataframes and charts for quicker loading in shiny app
+  map_data_df <- readRDS(file = "map_data2.rds")
   ke_data <- readRDS(file = "ke_data.rds")
   mobile_table <- readRDS(file = "mobile_table.rds")
   internet_table <- readRDS(file = "internet_table.rds")
+  #chloro_commFHS <- readRDS(file ="./bi_chloro_CommFHS_Phone_uncomp.rds")
+  #chloro_subsFHS <- readRDS(file ="./bi_chloro_SubFHS_Phone_uncomp.rds")
   
   mobile_gender_gap_chart <- readRDS(file="mobile_gender_gap_chart.rds")
   internet_gender_gap_chart <- readRDS(file="internet_gender_gap_chart.rds") 
@@ -290,15 +342,13 @@ server <- function(input, output) {
       )
     })
     
-    internet_table <- DT::datatable(internet_table, 
-                                    options = list(scrollX = TRUE)) %>% 
-      formatPercentage(c("uo_i_total_perc","uo_i_male_perc","uo_i_female_perc",
-                         "uo_dlt_total_perc","uo_dlt_male_perc","uo_dlt_female_perc",
-                         "internet_gender_gap","dlt_gender_gap"))
+    internet_table <- DT::datatable(internet_table,
+                                    options = list(scrollX = TRUE)) 
+    # format columns as %
     
     output$internet_table <- DT::renderDataTable(internet_table)
-    
-    output$bubblechart <- renderPlotly(
+
+    output$mpo_internet_bubble <- renderPlotly(
       plot1 <- ggplotly(mpo_internet_bubble , tooltip="text") %>% 
         layout(xaxis = list(autorange = TRUE),
                yaxis = list(autorange = TRUE))

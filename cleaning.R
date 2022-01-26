@@ -158,6 +158,7 @@ internet_table <- ke_data %>%
                 uo_i_total, uo_i_total_perc,
                 uo_i_male,  uo_i_male_perc,
                 uo_i_female,  uo_i_female_perc,
+                internet_gender_gap,
                 # Farming households
                 no_fhs, no_fhs_subsistence, no_fhs_commercial,
                 fhs_perc, fhs_subs_perc,fhs_comm_perc
@@ -320,7 +321,7 @@ int_bubble_data <- as.data.frame(internet_table) %>%
 # First, create dataframe with mobile and internet data
 
 ## BUBBLE CHART
-mobile_internet_df <- as.data.frame(mobile_internet_data) %>% 
+mobile_internet_df <- ke_data %>% 
   dplyr::filter(., admin_area == "County") %>% 
   dplyr::select(., county, 
                 pop_total, pop_male, pop_female,
@@ -338,16 +339,16 @@ mobile_internet_df <- as.data.frame(mobile_internet_data) %>%
   # prepare text for tooltip
   mutate(text = paste("County: ", county, 
                       "\nPopulation: ", formatC(pop_total, format = "d" ,big.mark = ","), 
-                      "\n % of Popn owning mobile phones: ",mpo_total_perc,
+                      "\n % of Popn owning mobile phones: ", mpo_total_perc,
                       "\n% of Popn that use internet: ", uo_i_total_perc, sep=""))
 
-mpo_internet_bubble <- ggplot(data = mobile_internet_df, aes(x = uo_i_total_perc, y = mpo_total_perc, size = pop_total, color= county, text = text))+
+mpo_internet_bubble <- ggplot(data = mobile_internet_df, 
+                              aes(x = uo_i_total_perc, y = mpo_total_perc, size = pop_total, color= county, text = text))+
   geom_point(alpha=0.7) +
   scale_size(range = c(1.4, 12), name="Population (M)") +
   scale_color_viridis(discrete=TRUE, guide=FALSE) +
   theme(legend.position="none") +
   labs(title = "Internet Use and Mobile Phone Ownership in Kenyan Counties\n(Larger circles indicate larger populations)",
-       subtitle = "ARERER",
        x = "% of population that uses the internet",
        y = "% of population that owns a mobile phone")+
   theme(plot.title = element_text(size = rel(0.8), face = "bold"),
@@ -358,7 +359,9 @@ mpo_internet_bubble <- ggplot(data = mobile_internet_df, aes(x = uo_i_total_perc
 
 mpo_internet_bubble
 
-saveRDS(mpo_internet_bubble, "./mpo_internet_bubble.rds")
+mobile_internet_interactive <- ggplotly(mpo_internet_bubble, tooltip="text")
+mobile_internet_interactive 
+saveRDS(mobile_internet_interactive, "./mpo_internet_bubble.rds", compress = FALSE)
 
 
 
