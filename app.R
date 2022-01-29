@@ -12,20 +12,13 @@
           # https://rpubs.com/spoonerf/countrymapggplot2
     # Build out MPO gender tab — Map with mpo ownership by county + top counties by MPO
 
-# 1. Add interactive Bubble Chart to Intro Slide (1hr)
-# 2. Add Ag maps to Third Tab (1hr)
-# 3. Format tables using DT Clare Blog (45mins)
-# $. Conclusion (1hr)
-# Add bar charts to DT Tabs
+# 2. Add some descriptive text to Farming HS explaning at a high level what to look out for
+# 3. Add brief Conclusion + next steps (1hr)
 
 #format legend values:
 # https://stackoverflow.com/questions/47410833/how-to-customize-legend-labels-in-r-leaflet
 # https://stackoverflow.com/questions/38161073/manually-adding-legend-values-in-leaflet#comment63910354_38235047
 
-
-
-
-#library(rKenyaCensus)
 
 library(shiny)
 library(shinydashboard)
@@ -49,11 +42,17 @@ library(sf)
 library(sp)
 library(magrittr)
 library(maptools)
-#library(raster)
 library(plyr)
 library(rgdal)
 library(viridis)
 library(rmapshaper)
+
+library(rKenyaCensus)
+library(biscale)
+library(cowplot)
+library(extrafont)
+
+
 
 
 
@@ -68,8 +67,8 @@ ui <- dashboardPage(skin = "purple",
                         id = "tabs",
                         menuItem("Introduction", tabName = "intro", icon = icon("search")),
                         menuItem("Mind the (Gender) Gap", tabName = "digi_gap", icon = icon("search")),
-                        menuItem("The Data", tabName = "the_data", icon = icon("search")), # add mobile ownership
-                        menuItem("Implications and Further Research",tabName = "conclusion", icon = icon("search"))) # sumary slide
+                        menuItem("Focus on Farming Households", tabName = "agriculture", icon = icon("search")),
+                        menuItem("Conclusion",tabName = "conclusion", icon = icon("search")))
                     ),
                     
                     dashboardBody(
@@ -158,7 +157,7 @@ ui <- dashboardPage(skin = "purple",
 
                                 ),
                         
-                        # Page 2: Overview of broad digital access across various counties. Which counties have highest access/lowest
+                        # Page 2: Difference between men and women
                         tabItem(tabName = "digi_gap",
                                 fluidRow(
                                   column(width = 12, 
@@ -182,8 +181,8 @@ ui <- dashboardPage(skin = "purple",
                         ),
                         
                         
-                        # Diving deeper into the gender gap
-                        tabItem(tabName = "the_data",
+                        # Implications in agriculture
+                        tabItem(tabName = "agriculture",
                                 fluidPage(
                                   fluidRow(
                                     
@@ -192,22 +191,34 @@ ui <- dashboardPage(skin = "purple",
                                     valueBoxOutput("male.uoI"),
                                     valueBoxOutput("female.uoI")),
                                   
-                                  # reduce size of table and add pyramid chart showing counties with men owning more phones vs women (ditto internet)
-                                  fluidRow(titlePanel("Digital Gender Gap"),
-                                           mainPanel(width = 6,
-                                                     dataTableOutput("internet_table"))),
                                   
                                   fluidRow(
-                                    column(width = 6,
-                                           p("Some text talking about the table")
-                                           
-                                    ),
-                                    column(width = 6,
-                                           p("Some text talking about the table")))
+                                    column(width = 8,
+                                           plotOutput("chloro_commFHS", height = 700)),
+                                    
+                                  ),
+                                  
+                                  fluidRow(
+                                    column(width = 8,
+                                           plotOutput("chloro_subsFHS", height = 700)),
+                                    
+                                  ),
+                                  
+                                  fluidRow(
+                                    column(width = 8,
+                                           plotOutput("chloro_LS", height = 700)),
+                                    
+                                  ),
+
+          
+                                  fluidRow(
+                                    column(width = 8,
+                                           plotOutput("chloro_cattle", height = 750))
+                                    )
                                 )
                         ),
-                        
-                        
+                                  
+            
                         tabItem(tabName = "conclusion",
                                 fluidPage(
                                   
@@ -216,11 +227,11 @@ ui <- dashboardPage(skin = "purple",
                                   ),
                                   
                                   fluidRow(
-                                    column(width = 6,
+                                    column(width = 8,
                                            p("Some text talking the analysis")
                                            
                                     ),
-                                    column(width = 6,
+                                    column(width = 8,
                                            p("Some text talking about future research")))
                                 )
                         ))
@@ -238,9 +249,13 @@ server <- function(input, output) {
   map_data_df <- readRDS(file = "map_data2.rds")
   ke_data <- readRDS(file = "ke_data.rds")
   mobile_table <- readRDS(file = "mobile_table.rds")
-  internet_table <- readRDS(file = "internet_table.rds")
-  #chloro_commFHS <- readRDS(file ="./bi_chloro_CommFHS_Phone_uncomp.rds")
-  #chloro_subsFHS <- readRDS(file ="./bi_chloro_SubFHS_Phone_uncomp.rds")
+  #internet_table <- readRDS(file = "internet_table.rds")
+  chloro_commFHS <- readRDS(file ="./bi_chloro_CommFHS_Phone_uncomp.rds")
+  chloro_subsFHS <- readRDS(file ="./bi_chloro_SubFHS_Phone_uncomp.rds")
+  chloro_LS <- readRDS(file = './bi_chloro_LS_Phone_uncomp.rds')
+  chloro_cattle <- readRDS(file = './bi_chloro_cattle_Phone.rds')
+  #chloro_chick <- readRDS(file = './bi_chloro_cattle_Phone.rds')
+  
   
   mobile_gender_gap_chart <- readRDS(file="mobile_gender_gap_chart.rds")
   internet_gender_gap_chart <- readRDS(file="internet_gender_gap_chart.rds") 
@@ -342,11 +357,11 @@ server <- function(input, output) {
       )
     })
     
-    internet_table <- DT::datatable(internet_table,
-                                    options = list(scrollX = TRUE)) 
+    #internet_table <- DT::datatable(internet_table,
+                                   # options = list(scrollX = TRUE)) 
     # format columns as %
     
-    output$internet_table <- DT::renderDataTable(internet_table)
+    #output$internet_table <- DT::renderDataTable(internet_table)
 
     output$mpo_internet_bubble <- renderPlotly(
       plot1 <- ggplotly(mpo_internet_bubble , tooltip="text") %>% 
@@ -357,6 +372,11 @@ server <- function(input, output) {
     output$mobile_gender_gap_chart <- renderPlot(mobile_gender_gap_chart)
     
     output$internet_gender_gap_chart <- renderPlot(internet_gender_gap_chart)
+    
+    output$chloro_commFHS <- renderPlot(chloro_commFHS)
+    output$chloro_subsFHS <- renderPlot(chloro_subsFHS)
+    output$chloro_cattle <- renderPlot(chloro_cattle)
+    output$chloro_LS <- renderPlot(chloro_LS)
     
     
     
@@ -380,7 +400,7 @@ server <- function(input, output) {
     output$map <- renderLeaflet({
       ### Specify the color scheme
       pal <- colorBin(
-        palette = "YlOrRd",
+        palette = "RdYlBu",
         domain = map_input()
       )
 

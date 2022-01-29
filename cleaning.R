@@ -20,7 +20,7 @@ library(tidyr)
 
 
 
-# force(DataCatalogue) # dataset dictionary
+cat <- force(DataCatalogue) # dataset dictionary
 
 # Load Map data  ---------------------------------------------------------
 # 
@@ -37,24 +37,26 @@ library(tidyr)
 # #names(st_geometry(KenyaSHP)) = NULL
  
 # # # Load Census data  ---------------------------------------------------------
-# mob.phone.df <- V4_T2.32
-# internet.use.df <- V4_T2.33
-# ag.type.df <-  V4_T2.25
+mob.phone.df <- V4_T2.32
+internet.use.df <- V4_T2.33
+farming.type.df <-  V4_T2.25
+ag.type.df <- V4_T2.20
+livestock.type.df <- V4_T2.23
  
-# df_list <- list(mob.phone.df, internet.use.df,ag.type.df)
+df_list <- list(mob.phone.df, internet.use.df,farming.type.df, ag.type.df, livestock.type.df)
 
 # # # Join mobile phone and internet data --------------------------------------
-# ke_data <- df_list %>%
-#   reduce(left_join, by = c("County", "SubCounty", "AdminArea")) %>%
-#   clean_names(., case = "upper_camel") %>%
-#   dplyr::select(., - one_of(c("TotalY", "MaleY", "FemaleY")))
-# 
-# ke_data <- ke_data %>%
-#   dplyr::rename(., PopTotal = "TotalX", PopMale = "MaleX", PopFemale = "FemaleX") %>%
-#   mutate(., AdminArea = case_when(
-#     SubCounty == "KENYA" ~ "National",
-#     SubCounty == "URBAN*" | SubCounty == "RURAL*" ~ "Rural-Urban",
-#     TRUE ~ AdminArea))
+ke_data <- df_list %>%
+  reduce(left_join, by = c("County", "SubCounty", "AdminArea")) %>%
+  clean_names(., case = "upper_camel") %>%
+  dplyr::select(., - one_of(c("TotalY", "MaleY", "FemaleY")))
+#
+ke_data <- ke_data %>%
+  dplyr::rename(., PopTotal = "TotalX", PopMale = "MaleX", PopFemale = "FemaleX") %>%
+  mutate(., AdminArea = case_when(
+    SubCounty == "KENYA" ~ "National",
+    SubCounty == "URBAN*" | SubCounty == "RURAL*" ~ "Rural-Urban",
+    TRUE ~ AdminArea))
 # 
 # counties_KenyaSHP <- KenyaSHP %>%
 #   st_drop_geometry() %>%
@@ -63,26 +65,26 @@ library(tidyr)
 #   unique()
 # 
 # # # convert column names in population dataset to lower title case
-# ke_data <- ke_data %>%
-#   ungroup() %>%
-#   clean_names() %>%
-#   mutate(., county = tools::toTitleCase(tolower(county)))
-# 
+ke_data <- ke_data %>%
+  ungroup() %>%
+  clean_names() %>%
+  mutate(., county = tools::toTitleCase(tolower(county)))
+
 # # ### Inspect the county names that are different in each of the datasets
 # # unique(ke_data$county)[which(!unique(ke_data$county) %in% counties_KenyaSHP)]
 
 #### Clean the county names so that they match in both datasets
-# ke_data <- ke_data %>%
-#   mutate(county = ifelse(county == "Taita/Taveta", "Taita Taveta",
-#                          ifelse(county == "Tharaka-Nithi", "Tharaka-nithi",
-#                                 ifelse(county == "Elgeyo/Marakwet", "Elgeyo-marakwet",
-#                                        ifelse(county == "Nairobi City", "Nairobi", county)))))
+ke_data <- ke_data %>%
+  mutate(county = ifelse(county == "Taita/Taveta", "Taita Taveta",
+                         ifelse(county == "Tharaka-Nithi", "Tharaka-nithi",
+                                ifelse(county == "Elgeyo/Marakwet", "Elgeyo-marakwet",
+                                       ifelse(county == "Nairobi City", "Nairobi", county)))))
  
 #### Inspect the county names that are different in each of the datasets
 
 # unique(data$county)[which(!unique(data$county) %in% counties_KenyaSHP)]
  
-### prepare to merge census data with shapehile data
+### prepare to merge census data with shapefile data
 # ke_data2 <- ke_data %>%
 #   dplyr::filter(., admin_area == "County") %>%
 #   dplyr::select(., -admin_area, -sub_county)
@@ -125,28 +127,32 @@ map_data_df <- map_data_df %>%
 
 ke_data <- ke_data %>% 
   dplyr::mutate(., 
+                # population
                 pop_male_perc = formattable::percent(x = pop_male/pop_total, digits = 1),
                 pop_female_perc = formattable::percent(x = pop_female/pop_total, digits = 1),
-                
+                # mobile phone
                 mpo_total_perc = formattable::percent(x = mpo_total/pop_total, digits =1),
                 mpo_male_perc = formattable::percent(x = mpo_male/pop_male, digits =1),
                 mpo_female_perc = formattable::percent(x = mpo_female/pop_female, digits =1),
-                
+                #internet use
                 uo_i_total_perc = formattable::percent(x = uo_i_total/pop_total, digits =1),
                 uo_i_male_perc = formattable::percent(x = uo_i_male/pop_male, digits =1),
                 uo_i_female_perc = formattable::percent(x = uo_i_female/pop_female, digits =1),
-                
-                uo_dlt_total_perc = formattable::percent(x = uo_dlt_total/pop_total, digits =1),
-                uo_dlt_male_perc = formattable::percent(x = uo_dlt_male/pop_male, digits =1),
-                uo_dlt_female_perc = formattable::percent(x = uo_dlt_female/pop_female, digits =1),          
-
+                # digital gap
                 mobile_gender_gap = formattable::percent((mpo_male_perc - mpo_female_perc), digits =1),
                 internet_gender_gap = formattable::percent((uo_i_male_perc - uo_i_female_perc), digits =1),
-                dlt_gender_gap = formattable::percent((uo_dlt_male_perc - uo_dlt_female_perc), digits =1),
-                
+                #farming households
                 fhs_perc = formattable::percent(x = no_fhs/pop_total, digits =1),
                 fhs_subs_perc = formattable::percent(x = no_fhs_subsistence/pop_total, digits =1),
-                fhs_comm_perc = formattable::percent(x = no_fhs_commercial/pop_total, digits =1)
+                fhs_comm_perc = formattable::percent(x = no_fhs_commercial/pop_total, digits =1),
+                #livestock households
+                livestock_hs_perc = formattable::percent(x = livestock_production/pop_total, digits =1),
+                chicken_indig_perc = formattable::percent(x = indigenous_chicken/pop_total, digits =1),
+                cattle_indig_perc = formattable::percent(x = indigenous_cattle/pop_total, digits =1),
+                cattle_dairy_exot_perc = formattable::percent(x = exotic_cattle_dairy/pop_total, digits =1),
+                cattle_beef_exot_perc = formattable::percent(x = exotic_cattle_beef/pop_total, digits =1),
+                goats_perc = formattable::percent(x = goats/pop_total, digits =1),
+                sheep_perc = formattable::percent(x = sheep/pop_total, digits =1)
                 )
   
 
