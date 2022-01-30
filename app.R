@@ -176,7 +176,7 @@ ui <- dashboardPage(skin = "purple",
                                          plotOutput("mobile_gender_gap_chart", height = 800)),
                                   box(width = 4,
                                       h3(tags$b("Mobile Phones")),
-                                      h4(p("At a national level, we observe virtually identical rates of mobile phone ownership
+                                      h4(p("At the national level, we observe virtually identical rates of mobile phone ownership
                                            between men and women (47.6 for men vs 47.0 for women.")),
                                       
                                       h4(p("However, when we compare the data at a county level, we see a much clearer picture of the
@@ -236,9 +236,9 @@ ui <- dashboardPage(skin = "purple",
                                            box(width = 12, background = "blue",
                                                h3(tags$b("Commercial Farming")),
                                                
-                                               h4(p("A trend we observe, is that central regions of the country, where the proportion (%) of commercial households is high,
-                                             also tend to have higher rates of phone ownership. However, some parts of western Kenya that have a relatively high proportion of 
-                                             commercial households have much lower phone ownership, which likely impacts their productivty."))))
+                                               h4(p("The central regions of the country, where the proportion (%) of commercial households is high,
+                                             tend to have higher rates of phone ownership. However, some parts of western Kenya that have a relatively high proportion of 
+                                             commercial farming households have much lower phone ownership, which likely impacts their productivty."))))
                                     
                                   ),
                                   
@@ -333,19 +333,19 @@ server <- function(input, output) {
   
 
   #load in processed dataframes and charts for quicker loading in shiny app
-  map_data_df <- readRDS(file = "map_data2.rds")
-  ke_data <- readRDS(file = "ke_data.rds")
-  mobile_table <- readRDS(file = "mobile_table.rds")
+  map_data_df <- readRDS(file = "./map_data2.rds")
+  ke_data <- readRDS(file = "./ke_data.rds")
+  mobile_table <- readRDS(file = "./mobile_table.rds")
   #internet_table <- readRDS(file = "internet_table.rds")
   chloro_commFHS <- readRDS(file ="./bi_chloro_CommFHS_Phone_uncomp.rds")
   chloro_subsFHS <- readRDS(file ="./bi_chloro_SubFHS_Phone_uncomp.rds")
   chloro_LS <- readRDS(file = './bi_chloro_LS_Phone_uncomp.rds')
   chloro_cattle <- readRDS(file = './bi_chloro_cattle_Phone.rds')
-  #chloro_chick <- readRDS(file = './bi_chloro_cattle_Phone.rds')
+  #chloro_chick <- readRDS(file = './charts/bi_chloro_cattle_Phone.rds')
   
   
-  mobile_gender_gap_chart <- readRDS(file="mobile_gender_gap_chart.rds")
-  internet_gender_gap_chart <- readRDS(file="internet_gender_gap_chart.rds") 
+  mobile_gender_gap_chart <- readRDS(file="./mobile_gender_gap_chart.rds")
+  internet_gender_gap_chart <- readRDS(file="./internet_gender_gap_chart.rds") 
   mpo_internet_bubble <- readRDS(file = "./mpo_internet_bubble.rds")
   
   #some data manipulation to derive the values of the ValueBoxes - consider moving this to cleaning file

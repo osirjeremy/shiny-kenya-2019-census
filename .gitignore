@@ -2,6 +2,7 @@
 # History files
 .Rhistory
 .RData
+.RDataTmp
 .Ruserdata
 .icloud
 .csv
