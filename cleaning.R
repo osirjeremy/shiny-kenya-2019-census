@@ -357,9 +357,9 @@ mpo_internet_bubble <- ggplot(data = mobile_internet_df,
   labs(title = "Internet Use and Mobile Phone Ownership in Kenyan Counties\n(Larger circles indicate larger populations)",
        x = "% of population that uses the internet",
        y = "% of population that owns a mobile phone")+
-  theme(plot.title = element_text(size = rel(0.8), face = "bold"),
-        axis.title.x = element_text(size = rel(0.8), face = "bold"),
-        axis.title.y = element_text(size = rel(0.8), face = "bold")) +
+  theme(plot.title = element_text(size = rel(1), face = "bold"),
+        axis.title.x = element_text(size = rel(0.9), face = "bold"),
+        axis.title.y = element_text(size = rel(0.9), face = "bold")) +
   scale_x_continuous(breaks = seq(0,0.6,0.1),labels = scales::label_percent(accuracy = 1L)) +
   scale_y_continuous(breaks = seq(0,0.6,0.1),labels = scales::label_percent(accuracy = 1L))
 

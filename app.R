@@ -86,7 +86,7 @@ ui <- dashboardPage(skin = "purple",
                                 # box(width = 12,
                                 #     plotlyOutput("bubblechart"))),
                                 fluidRow(
-                                  column(width = 6, align = "left",
+                                  column(width = 6, align = "center",
                                          selectInput(inputId = "variableselected",
                                                      label = "Select a Digital Indicator to display in the map",
                                                      choices = c("Mobile Phone Ownership % (Total pop)" = "mpo_total_perc",
@@ -125,15 +125,11 @@ ui <- dashboardPage(skin = "purple",
                                          ))
                                 ),
                                 fluidRow(
-                                  column(width = 12, offset = 0, style='padding-left:0px; padding-right:0px; padding-top:30px; padding-bottom:5px',
+                                  column(width = 12, offset = 0, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
                                          box(width = 12,
                                              h3(tags$b("Higher Phone Ownership generally correlates with more internet Usage  ")),
                                              h4(p("The interactive bubble chart (see below) shows a positive relationship between phone ownership and internet usage,
                                              across counties.")),
-                                             
-                                             h4(tags$i("Hover cursor over the bubbles to see more information on each county. You can toggle the filters
-                                                       at the top of the chart to zoom in on particular areas, compare counties metrics, or 
-                                                       highlight certain areas of the chart")),
                                              
                                              h4(p("With a few exceptions, larger population centers (shown by larger circles in the chart) tend to have higher 
                                              rates of digital connectivity. 
@@ -151,16 +147,20 @@ ui <- dashboardPage(skin = "purple",
                                   )
                                 ), 
                                 fluidRow(
-                                  column(width = 11, offset = 0.5, style='padding-left:0px; padding-right:0px; padding-top:10px; padding-bottom:5px',
-                                         plotlyOutput("mpo_internet_bubble", height = 600)
+                                  column(width = 11, offset = 0, style='padding-left:15px; padding-right:15px; padding-top:0px; padding-bottom:0px',
+                                         h4(tags$i("Hover cursor over the bubbles to see more information on each county. Toggle the filters
+                                                       at the top of the chart to highlight certain areas of the chart, or compare counties metrics.")),
+                                         plotlyOutput("mpo_internet_bubble", height = 700)
                                   ))
-
-                                ),
+                                
+                        ),
                         
                         # Page 2: Difference between men and women
                         tabItem(tabName = "digi_gap",
                                 fluidRow(
-                                  column(width = 12, 
+                                  h2("National Statistics"),
+                                  column(width = 12,
+                                         
                                          tags$head(tags$style(HTML(".small-box {height: 70px}"))),
                                          valueBoxOutput("total.mpo.perc"),
                                          valueBoxOutput("male.mpo.perc"),
@@ -170,12 +170,39 @@ ui <- dashboardPage(skin = "purple",
                                          valueBoxOutput("male.uoI.perc"),
                                          valueBoxOutput("female.uoI.perc"))),
                                 fluidRow(
-                                  column(width = 7,
-                                         plotOutput("mobile_gender_gap_chart", height = 800))),
+                                  h2("County Statistics"),
+                                  column(width = 8,
+                                         
+                                         plotOutput("mobile_gender_gap_chart", height = 800)),
+                                  box(width = 4,
+                                      h3(tags$b("Mobile Phones")),
+                                      h4(p("At a national level, we observe virtually identical rates of mobile phone ownership
+                                           between men and women (47.6 for men vs 47.0 for women.")),
+                                      
+                                      h4(p("However, when we compare the data at a county level, we see a much clearer picture of the
+                                           digital divide between genders. In the first chart, we observe that men owned more phones 
+                                           than women in 61% of counties. In some places, men' had a 's phone ownership rate was 8% higher than women."))
+                                      
+                                  )
+                                  
+                                  
+                                  
+                                  
+                                ),
                                 
                                 fluidRow(
-                                  column(width = 7,
-                                         plotOutput("internet_gender_gap_chart", height = 800))),
+                                  column(width = 8,
+                                         plotOutput("internet_gender_gap_chart", height = 800)),
+                                  box(width = 4,
+                                      h3(tags$b("Internet access")),
+                                      
+                                      h4(p("Internet usage was more stark. At the national level, men were more 5% likely to use the internet than women.
+                                      Further, men used the internet more than women in EVERY county, with their usage surpassing women's by 2%-8.5%.")),
+                                      
+                                      h4(p("The gender gap in digital connectivity has implications on women's ability to participate in the
+                                           economy. In the next tab, we focus on the agricultural industry, where women make up an estimated 59% of the labor
+                                           force (World Bank 2019"))
+                                  ))
                                 
                                 
                         ),
@@ -183,60 +210,120 @@ ui <- dashboardPage(skin = "purple",
                         
                         # Implications in agriculture
                         tabItem(tabName = "agriculture",
+                                
                                 fluidPage(
                                   fluidRow(
-                                    
-                                    # replace with bar chart showing population with mobile phone and those without (ditto for internet)
-                                    valueBoxOutput("total.uoI"), 
-                                    valueBoxOutput("male.uoI"),
-                                    valueBoxOutput("female.uoI")),
-                                  
-                                  
-                                  fluidRow(
-                                    column(width = 8,
-                                           plotOutput("chloro_commFHS", height = 700)),
-                                    
-                                  ),
-                                  
-                                  fluidRow(
-                                    column(width = 8,
-                                           plotOutput("chloro_subsFHS", height = 700)),
-                                    
-                                  ),
-                                  
-                                  fluidRow(
-                                    column(width = 8,
-                                           plotOutput("chloro_LS", height = 700)),
-                                    
-                                  ),
+                                    box(width = 12, 
+                                        h2(tags$b("Mobile phone ownership and Agriculture")),
+                                        h4(p("Agriculture is one of the most important drivers of Kenya's economy. It contributes an estimated 33% to the
+                                             country's Gross Domenstic Product (GDP) and employs approx. 60% of the population (World Bank).")),
+                                        
+                                        h4(p("Women make up an estimated 59% of the agricultural labor orce (World Bank 2019),
+                                             and the gender gap in digital connectivity has implications on women's ability to effectively participate .")),
+                                        
+                                        h4(p("Below are a series of charts that compare mobile phone ownership to the number of households participating in
+                                             different types of agricutlure, namely: Subsistence Farming, Commercial Farming, Livetock Rearing, Cattle Rearing.")),
+                                        h4(tags$i("Areas with lighter blue shaded areas represent areas where there is a high particpation in agriculture, but lower
+                                             phone ownership. Dark blue shaded areas represent regions where there is high participation in agriculture and high phone 
+                                             ownership"))
+                                        )),
 
-          
-                                  fluidRow(
-                                    column(width = 8,
-                                           plotOutput("chloro_cattle", height = 750))
-                                    )
-                                )
-                        ),
                                   
-            
+                                  fluidRow(
+                                    column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:10px; padding-bottom:0px',
+                                           plotOutput("chloro_commFHS", height = 700)),
+                                    column(width = 4, style='padding-left:5px; padding-right:5px; padding-top:10px; padding-bottom:0px',
+                                           box(width = 12, background = "blue",
+                                               h3(tags$b("Commercial Farming")),
+                                               
+                                               h4(p("A trend we observe, is that central regions of the country, where the proportion (%) of commercial households is high,
+                                             also tend to have higher rates of phone ownership. However, some parts of western Kenya that have a relatively high proportion of 
+                                             commercial households have much lower phone ownership, which likely impacts their productivty."))))
+                                    
+                                  ),
+                                  
+                                  fluidRow(
+                                    column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                           plotOutput("chloro_subsFHS", height = 700)),
+                                    column(width = 4,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                           box(width = 12,background = "blue",
+                                               h3(tags$b("Subsistence Farming")),
+                                               
+                                               h4(p("Similar to the above, central regions of the country have the highest overlap between high numbers of subsistence farming
+                                               households and high rates of phone ownership. However, some parts of western Kenya and the north east have a relatively high 
+                                               proportion of agricultural households but much lower phone ownership"))))
+                                    
+                                  ),
+                                  
+                                  fluidRow(
+                                    column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                           plotOutput("chloro_LS", height = 700)),
+                                    column(width = 4, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                           box(width = 12,background = "blue",
+                                               h3(tags$b("Livestock Rearing")),
+                                               
+                                               h4(p("Similar to the above, central regions of the country have the highest overlap between high numbers of subsistence farming
+                                               households and high rates of phone ownership. However, the northern areas of the country which are
+                                             have much higher rates of livestock rearing have the largest discrepnacy between households participating in
+                                             this type of agriculture and phone ownership."))))
+                                    
+                                  ),
+                                  
+                                  
+                                  fluidRow(
+                                    column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                           plotOutput("chloro_cattle", height = 750)),
+                                    column( width = 4, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                            box(width = 12, background = "blue",
+                                    h3(tags$b("Cattle Rearing")),
+                                    
+                                    h4(p("Low digital penetration is particularly evident in the northern areas of the country, where
+                                         cattle rearing is prevalent."))))
+                                  )
+                                )
+                                  
+                                
+                        ),
+                        
+                        
                         tabItem(tabName = "conclusion",
                                 fluidPage(
                                   
-                                  fluidRow(titlePanel("Implications and Further Research"),
+                                  fluidRow(h2("Lessons Learned and Further Research"), offset = 5,
                                            mainPanel(width = 12)
                                   ),
                                   
                                   fluidRow(
-                                    column(width = 8,
-                                           p("Some text talking the analysis")
-                                           
-                                    ),
-                                    column(width = 8,
-                                           p("Some text talking about future research")))
+                                    column(width = 12,
+                                           box(width = 12, 
+                                               h3(tags$b("What we learned")),
+                                               h4(tags$li("Digital connectivty is highest in central regions of Kenya
+                                                          and lowest in the north and north east")),
+                                               h4(tags$li("National statistics obscure the gap in digital connectivity between men and women. 
+                                                          The gap is most apparent at county level.")),
+                                               h4(tags$li("Crop farming households in the central Kenya 
+                                                          own mobile phones at higher rates than similar households in western Kenya.")),
+                                               h4(tags$li("Livestock rearing households in north and northeast have lower mobile phone penetration rates compared to other regions.")),
+                                               h4(tags$li("Low digital connectivity in the west
+                                                          and northern regions of Kenya might hinder economic productivity."))
+                                               )
+                                           ),
+                                    column(width = 12,
+                                           box(width = 12, 
+                                               h3(tags$b("What to do next")),
+                                               h4(tags$li("Examine agricultural output data across counties to investigate
+                                                          implications of low digital connectivity in a county")),
+                                               h4(tags$li("Explore agricultural household data by gender at the county level"))
+
+                                           )
+                                    )
+                                    )
+
                                 )
                         ))
                     )
 )
+
 
 
     
@@ -278,33 +365,35 @@ server <- function(input, output) {
 # Value Box values
   
 ##Digital Access Overview tab
-    output$pop.total <- renderValueBox({
-      valueBox(
-        value = tags$p(formatC(pop.total,format = "d", big.mark = ","), style = "font-size: 75%;"),
-        subtitle = "Total Population"
-      )
-    })
-    
-    #Male population
-    output$pop.male.perc <- renderValueBox({
-      valueBox(
-        value = tags$p(pop.male.perc, style = "font-size: 75%;"),
-        subtitle = "Male Population"
-      )
-    })
-    
-    #Female Population
-    output$pop.female.perc <- renderValueBox({
-      valueBox(
-        value = tags$p(pop.female.perc, style = "font-size: 75%;"),
-        subtitle = "Female Population"
-      )
-    })
+    # output$pop.total <- renderValueBox({
+    #   valueBox(
+    #     value = tags$p(formatC(pop.total,format = "d", big.mark = ","), style = "font-size: 75%;"),
+    #     subtitle = "Total Population",
+    #     color = "red"
+    #   )
+    # })
+    # 
+    # #Male population
+    # output$pop.male.perc <- renderValueBox({
+    #   valueBox(
+    #     value = tags$p(pop.male.perc, style = "font-size: 75%;"),
+    #     subtitle = "Male Population"
+    #   )
+    # })
+    # 
+    # #Female Population
+    # output$pop.female.perc <- renderValueBox({
+    #   valueBox(
+    #     value = tags$p(pop.female.perc, style = "font-size: 75%;"),
+    #     subtitle = "Female Population"
+    #   )
+    # })
     
     # Population owning mobile phones
     output$total.mpo.perc <- renderValueBox({
       valueBox(
         value = tags$p(mpo.total.perc, style = "font-size: 75%;"),
+        color = "red",
         subtitle = "Mobile phone ownership %, total popn.",
         tags$i(class = "fas fa-mobile-alt", style = "font-size:32px;")
       )
@@ -314,6 +403,7 @@ server <- function(input, output) {
     output$male.mpo.perc <- renderValueBox({
       valueBox(
         value = tags$p(mpo.male.perc,digits = 1, style = "font-size: 75%;"),
+        color = "red",
         subtitle = "Mobile phone ownership %, male",
         tags$i(class = "fas fa-mobile-alt", style = "font-size:32px;")
       )
@@ -323,6 +413,7 @@ server <- function(input, output) {
     output$female.mpo.perc <- renderValueBox({
       valueBox(
         value = tags$p(mpo.female.perc, style = "font-size: 75%;"),
+        color = "red",
         subtitle = "Mobile phone ownership %, female",
         tags$i(class = "fas fa-mobile-alt", style = "font-size:32px;")
       )
@@ -334,6 +425,7 @@ server <- function(input, output) {
     output$total.uoI.perc <- renderValueBox({
       valueBox(
         value = tags$p(uoI.total.perc, style = "font-size: 75%;"),
+        color = "olive",
         subtitle = "Internet Use, %, total popn.",
         tags$i(class ="fas fa-wifi", style = "font-size:32px;")
       )
@@ -343,6 +435,7 @@ server <- function(input, output) {
     output$male.uoI.perc <- renderValueBox({
       valueBox(
         value = tags$p(uoI.male.perc, style = "font-size: 75%;"),
+        color = "olive",
         subtitle = "Internet Use, %, male popn.",
         tags$i(class ="fas fa-wifi", style = "font-size:32px;")
       )
@@ -352,6 +445,7 @@ server <- function(input, output) {
     output$female.uoI.perc <- renderValueBox({
       valueBox(
         value = tags$p(uoI.female.perc, style = "font-size: 75%;"),
+        color = "olive",
         subtitle = "Internet Use, %, female popn.",
         tags$i(class ="fas fa-wifi", style = "font-size:32px;")
       )
