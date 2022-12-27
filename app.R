@@ -1,24 +1,4 @@
-
-# Resources:
-    # https://github.com/johnmutiso/rKenyaCensusPlots/blob/master/Persons_per_household_map.R
-    # https://github.com/brynmwangy/2019-Kenya-Census-App/blob/master/app.R
-    # dashboardBody options : https://rstudio.github.io/shinydashboard/structure.html
-
-# Next Steps
-    # start with building out MPO overview tab - add valuebox showing summary info for entire country
-        # add data to server function, and connect to outputs******
-        # add data to map to MPO overview: (fix rename argument)
-          #https://shelkariuki.netlify.app/post/firstmap/
-          # https://rpubs.com/spoonerf/countrymapggplot2
-    # Build out MPO gender tab — Map with mpo ownership by county + top counties by MPO
-
-# 2. Add some descriptive text to Farming HS explaning at a high level what to look out for
-# 3. Add brief Conclusion + next steps (1hr)
-
-#format legend values:
-# https://stackoverflow.com/questions/47410833/how-to-customize-legend-labels-in-r-leaflet
-# https://stackoverflow.com/questions/38161073/manually-adding-legend-values-in-leaflet#comment63910354_38235047
-
+#format values  for valuebox and map labels
 
 library(shiny)
 library(shinydashboard)
@@ -30,11 +10,12 @@ library(htmltools)
 library(colorspace)
 library(ggrepel)
 
+library(plyr)
 library(dplyr)
-library(DT)
-library(tidyr)
-library(janitor)
-library(tidyverse)
+#library(DT)
+#library(tidyr)
+#library(janitor)
+#library(tidyverse)
 library(formattable)
 
 library(leaflet)
@@ -42,22 +23,19 @@ library(sf)
 library(sp)
 library(magrittr)
 library(maptools)
-library(plyr)
 library(rgdal)
 library(viridis)
 library(rmapshaper)
 
-library(rKenyaCensus)
-library(biscale)
+#library(rKenyaCensus)
+#library(biscale)
 library(cowplot)
 library(extrafont)
+library(systemfonts)
 
 
 
-
-
-
-# Define UI for application that draws a histogram
+# Define UI 
 ui <- dashboardPage(skin = "purple",
                     # Shiny App Cover Page - summary of project and key questions. Digital Access, and gender gap
                     dashboardHeader(title = "Kenya 2019 Census"),
@@ -79,7 +57,8 @@ ui <- dashboardPage(skin = "purple",
                                          box(width = 12,
                                              h2(tags$b("Investigating Digital Connectivity and Divide in Kenya 2019 Census Data")),
                                              h4(p("This dashboard explores the rates of mobile phone ownership
-                                                  and internet use across Kenyan counties, and investigates differences in adoption of these digital tools by regions and gender.")),
+                                                  and internet use across Kenyan counties, and investigates differences in adoption of these digital tools by regions and gender.
+                                                  Insights from this analysis can inform the government's decisionmaking around where it should prioritize investments in digital infrastucture")),
                                              h5(p("Research and visualizations by Jeremy Osir.\n
                                                                                 Census Data library provided by Shel Kariuki, rKenyaCensus"))))
                                 ),
@@ -105,19 +84,19 @@ ui <- dashboardPage(skin = "purple",
                                              h4(p("The interactive map allows us to explore various digital connectivity metrics, specifically mobile phone ownership and internet access,
                                              across Kenyan counties by gender.")),
                                              
-                                             h4(p("According to the data, digital connectivity tends to be highest in the central and southern regions of the country - specifically in
-                                             the capital city Nairobi, and its surrounding counties, which include places like Kiambu, Nyeri, Murang'a and Kirinyaga.")),
+                                             h4(p("According to the data, digital connectivity tends to be highest in the central and southern counties of the country - particularly around
+                                             the capital city Nairobi - with pockets of moderate digital connectivity in the western counties.")),
                                              
-                                             h4(p("Conversely, digital connectivity is lowest in north and north eastern Kenya. According to the World Bank these regions, which are semi-arid 
+                                             h4(p("Conversely, digital connectivity is lowest in north and northeastern Kenya. According to the World Bank these regions, which are semi-arid 
                                              and often experience drought, are characterized by profound infrastructure deficits, including lack of access to roads, electricity, water, and to social services.
                                              World Bank data also indicate that the average poverty rate in these regions is double the national average (68% vs 34%).")),
                                              
-                                             h4(p("While more men tend to own phones and use the internet, the patterns of digital connectivity across countries do not seem to vary significantly
-                                             compared to the overall population.")),
+                                             h4(p("County-level data highlights that men tend to own phones and use the internet more than women.")),
+                                             br(),
                                              
-                                             h4(tags$i("In the other tabs of this dashboard, which can be accessed on the top left of the dashboard, we will take a closer look at how 
-                                             digital connectivity varies between men and women (see Mind the Gender Gap),and finally look at how digital access amongst the broader population
-                                             could have implications on agriculture,a big driver of Kenya's economy (see Farming tab)"))
+                                             h4(tags$i("In the other tabs of this dashboard (see left), we take a closer look at how 
+                                             digital connectivity varies between men and women (Mind the Gender Gap), and look at digital access
+                                             for households that engage in different types of agriculture (see Farming tab)"))
                                              
                                              
                                              
@@ -128,27 +107,25 @@ ui <- dashboardPage(skin = "purple",
                                   column(width = 12, offset = 0, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
                                          box(width = 12,
                                              h3(tags$b("Higher Phone Ownership generally correlates with more internet Usage  ")),
-                                             h4(p("The interactive bubble chart (see below) shows a positive relationship between phone ownership and internet usage,
-                                             across counties.")),
+                                             h4(p("The interactive bubble chart (below) shows the correlation between high phone ownership and internet usage.")),
                                              
-                                             h4(p("With a few exceptions, larger population centers (shown by larger circles in the chart) tend to have higher 
-                                             rates of digital connectivity. 
-                                             Nairobi,Kiambu and Mombasa (top-right), which had large populations (1M+) led the way in both metrics.
+                                             h4(p("With a few exceptions, larger population centers (shown by larger circles) such as
+                                             Nairobi, Kiambu and Mombasa (top-right) had the highest connectivity.
                                              Phone ownership and internet usage in these countries exceeded 60% and 40%, respectively. ")),
                                              
                                              h4(p("Conversely, a few counties with large populations like Bungoma (1.5M), Narok (1M), Migori (1M), and 
                                              Kilifi (1.3M) had phone ownership rates of less than 40% and internet usage less than 15%.")),
                                              
                                              h4(tags$i("The counties in the bottom left quadrant of the chart (i.e. low phone ownership and low internet usage)
-                                                       were predominantly counties in the north and northeastern region of Kenya. This highlights the significant
-                                                       digital inequity in these regions, which has broader implications on these populations ability to 
+                                                       were predominantly counties in the north and northeastern parts of Kenya. This highlights the significant
+                                                       lack of digital connectivity in these regions, which has broader implications on these communities ability to 
                                                        participate in the modern digital economy."))
                                          )
                                   )
                                 ), 
                                 fluidRow(
                                   column(width = 11, offset = 0, style='padding-left:15px; padding-right:15px; padding-top:0px; padding-bottom:0px',
-                                         h4(tags$i("Hover cursor over the bubbles to see more information on each county. Toggle the filters
+                                         h4(tags$i("Hover cursor over the bubbles to see information on each county. Toggle the filters
                                                        at the top of the chart to highlight certain areas of the chart, or compare counties metrics.")),
                                          plotlyOutput("mpo_internet_bubble", height = 700)
                                   ))
@@ -176,12 +153,13 @@ ui <- dashboardPage(skin = "purple",
                                          plotOutput("mobile_gender_gap_chart", height = 800)),
                                   box(width = 4,
                                       h3(tags$b("Mobile Phones")),
-                                      h4(p("At the national level, we observe virtually identical rates of mobile phone ownership
+                                      h4(p("At the national level, rates of mobile phone ownership are virtually identical
                                            between men and women (47.6 for men vs 47.0 for women.")),
                                       
                                       h4(p("However, when we compare the data at a county level, we see a much clearer picture of the
                                            digital divide between genders. In the first chart, we observe that men owned more phones 
-                                           than women in 61% of counties. In some places, men' had a 's phone ownership rate was 8% higher than women."))
+                                           than women in 61% of counties. In some places, men's phone ownership rate was 8% higher than 
+                                           that of women."))
                                       
                                   )
                                   
@@ -196,12 +174,12 @@ ui <- dashboardPage(skin = "purple",
                                   box(width = 4,
                                       h3(tags$b("Internet access")),
                                       
-                                      h4(p("Internet usage was more stark. At the national level, men were more 5% likely to use the internet than women.
-                                      Further, men used the internet more than women in EVERY county, with their usage surpassing women's by 2%-8.5%.")),
+                                      h4(p("The gender gap in internet usage was more stark. At the national level, men were more 5% likely to use the internet.
+                                      Further, men used the internet more than women in EVERY single county, with their usage rate surpassing women's by 2%-8.5%.")),
                                       
                                       h4(p("The gender gap in digital connectivity has implications on women's ability to participate in the
-                                           economy. In the next tab, we focus on the agricultural industry, where women make up an estimated 59% of the labor
-                                           force (World Bank 2019"))
+                                           economy. In the next tab, we focus on connectivity amongst households that practice agriculture. According to
+                                           national statistics women make up an estimated 59% of the agricultural labor force (World Bank 2019"))
                                   ))
                                 
                                 
@@ -218,13 +196,21 @@ ui <- dashboardPage(skin = "purple",
                                         h4(p("Agriculture is one of the most important drivers of Kenya's economy. It contributes an estimated 33% to the
                                              country's Gross Domenstic Product (GDP) and employs approx. 60% of the population (World Bank).")),
                                         
-                                        h4(p("Women make up an estimated 59% of the agricultural labor orce (World Bank 2019),
-                                             and the gender gap in digital connectivity has implications on women's ability to effectively participate .")),
+                                        h4(p("It is important to note that women make up an estimated 59% of the agricultural labor orce (World Bank 2019),
+                                             and the gender gap in digital connectivity (shown in previous tab) could have implications on women's ability to 
+                                             maximize their agricultural productivity.")),
                                         
-                                        h4(p("Below are a series of charts that compare mobile phone ownership to the number of households participating in
-                                             different types of agricutlure, namely: Subsistence Farming, Commercial Farming, Livetock Rearing, Cattle Rearing.")),
-                                        h4(tags$i("Areas with lighter blue shaded areas represent areas where there is a high particpation in agriculture, but lower
-                                             phone ownership. Dark blue shaded areas represent regions where there is high participation in agriculture and high phone 
+                                        h4(p("Digital agriculural services are becoming increasingly important in sub-Saharan African countries like Kenya. Digital tools, including mobile phones, are helping
+                                             farming households increase their productivity, by improving access to finance, advisory, insurance, and market services.
+                                             For example, MPESA, a phone-based service that allows individuals to make digital transactions without a bank account, has increased
+                                             access to financial services, especially in rural areas where traditional banks are less prevalent. It has been
+                                             attributed to a 2% decrease in poverty (Tanveet Suri, Mobile money. Annual Review of Economics 9, 2017).")),
+                                        
+                                        h4(p("Below are a series of charts that compare mobile phone ownership to the percent of households participating in
+                                             various types of agriculture, namely: Subsistence Farming, Commercial Farming, Cattle Rearing.")),
+                                        br(),
+                                        h4(tags$i("Lighter blue shaded areas represent counties where there is a large proportion of households participation in agriculture, but low
+                                             phone ownership. Dark blue shaded areas represent regions where there is high household participation in agriculture and high phone 
                                              ownership"))
                                         )),
 
@@ -236,8 +222,8 @@ ui <- dashboardPage(skin = "purple",
                                            box(width = 12, background = "blue",
                                                h3(tags$b("Commercial Farming")),
                                                
-                                               h4(p("The central regions of the country, where the proportion (%) of commercial households is high,
-                                             tend to have higher rates of phone ownership. However, some parts of western Kenya that have a relatively high proportion of 
+                                               h4(p("The central regions of the country, where the proportion (%) of commercial households is higher,
+                                             tend to have higher rates of phone ownership. However, parts of western Kenya that have a relatively high proportion of 
                                              commercial farming households have much lower phone ownership, which likely impacts their productivty."))))
                                     
                                   ),
@@ -249,25 +235,24 @@ ui <- dashboardPage(skin = "purple",
                                            box(width = 12,background = "blue",
                                                h3(tags$b("Subsistence Farming")),
                                                
-                                               h4(p("Similar to the above, central regions of the country have the highest overlap between high numbers of subsistence farming
+                                               h4(p("Similar to the above, central regions of the country have the highest overlap between high proportion of subsistence farming
                                                households and high rates of phone ownership. However, some parts of western Kenya and the north east have a relatively high 
                                                proportion of agricultural households but much lower phone ownership"))))
                                     
                                   ),
                                   
-                                  fluidRow(
-                                    column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
-                                           plotOutput("chloro_LS", height = 700)),
-                                    column(width = 4, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
-                                           box(width = 12,background = "blue",
-                                               h3(tags$b("Livestock Rearing")),
-                                               
-                                               h4(p("Similar to the above, central regions of the country have the highest overlap between high numbers of subsistence farming
-                                               households and high rates of phone ownership. However, the northern areas of the country which are
-                                             have much higher rates of livestock rearing have the largest discrepnacy between households participating in
-                                             this type of agriculture and phone ownership."))))
-                                    
-                                  ),
+                                  # fluidRow(
+                                  #   column(width = 8,style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                  #          plotOutput("chloro_LS", height = 700)),
+                                  #   column(width = 4, style='padding-left:5px; padding-right:5px; padding-top:30px; padding-bottom:0px',
+                                  #          box(width = 12,background = "blue",
+                                  #              h3(tags$b("Livestock Rearing")),
+                                  #              
+                                  #              h4(p("The northeast areas of the country which
+                                  #            have higher rates of livestock rearing have the largest discrepancy between households participating in
+                                  #            this type of agriculture and phone ownership."))))
+                                  #   
+                                  # ),
                                   
                                   
                                   fluidRow(
@@ -297,23 +282,22 @@ ui <- dashboardPage(skin = "purple",
                                     column(width = 12,
                                            box(width = 12, 
                                                h3(tags$b("What we learned")),
-                                               h4(tags$li("Digital connectivty is highest in central regions of Kenya
+                                               h4(tags$li("Digital connectivty is highest in central regions of Kenya and pockets of western Kenya; it is moderate in the east
                                                           and lowest in the north and north east")),
-                                               h4(tags$li("National statistics obscure the gap in digital connectivity between men and women. 
-                                                          The gap is most apparent at county level.")),
+                                               h4(tags$li("National statistics obscure the gender gap in digital connectivity. 
+                                                          The digital divide is most apparent at county level.")),
                                                h4(tags$li("Crop farming households in the central Kenya 
                                                           own mobile phones at higher rates than similar households in western Kenya.")),
                                                h4(tags$li("Livestock rearing households in north and northeast have lower mobile phone penetration rates compared to other regions.")),
-                                               h4(tags$li("Low digital connectivity in the west
-                                                          and northern regions of Kenya might hinder economic productivity."))
+                                               h4(tags$li("Lower digital connectivity in the northern regions of Kenya, and pockets of the west might hinder economic productivity."))
                                                )
                                            ),
                                     column(width = 12,
                                            box(width = 12, 
                                                h3(tags$b("What to do next")),
-                                               h4(tags$li("Examine agricultural output data across counties to investigate
+                                               h4(tags$li("Examine agricultural output data across counties to investigate economic
                                                           implications of low digital connectivity in a county")),
-                                               h4(tags$li("Explore agricultural household data by gender at the county level"))
+                                               h4(tags$li("Explore agricultural household data by gender at the county level. The census data did not include this breakdown"))
 
                                            )
                                     )
@@ -339,9 +323,9 @@ server <- function(input, output) {
   #internet_table <- readRDS(file = "internet_table.rds")
   chloro_commFHS <- readRDS(file ="./bi_chloro_CommFHS_Phone_uncomp.rds")
   chloro_subsFHS <- readRDS(file ="./bi_chloro_SubFHS_Phone_uncomp.rds")
-  chloro_LS <- readRDS(file = './bi_chloro_LS_Phone_uncomp.rds')
-  chloro_cattle <- readRDS(file = './bi_chloro_cattle_Phone.rds')
-  #chloro_chick <- readRDS(file = './charts/bi_chloro_cattle_Phone.rds')
+  #chloro_LS <- readRDS(file = "./bi_chloro_LS_Phone_uncomp.rds")
+  chloro_cattle <- readRDS(file = "./bi_chloro_cattle_Phone.rds")
+  #chloro_chick <- readRDS(file = "./charts/bi_chloro_cattle_Phone.rds")
   
   
   mobile_gender_gap_chart <- readRDS(file="./mobile_gender_gap_chart.rds")
@@ -495,6 +479,8 @@ server <- function(input, output) {
       ### Specify the color scheme
       pal <- colorBin(
         palette = "RdYlBu",
+        bins = 6,
+        pretty = TRUE,
         domain = map_input()
       )
 
