@@ -474,12 +474,11 @@ server <- function(input, output) {
       
     })
 
-
     output$map <- renderLeaflet({
       ### Specify the color scheme
-      pal <- colorBin(
+      pal <- colorBin( 
         palette = "RdYlBu",
-        bins = 6,
+        bins = 5,
         pretty = TRUE,
         domain = map_input()
       )
